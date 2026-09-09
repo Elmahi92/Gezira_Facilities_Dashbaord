@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Interactive health, water, and school facility map for Sudan.">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://server.arcgisonline.com; connect-src 'self' https://server.arcgisonline.com;">
+    <title>Gezira Facilities Dashboard</title>
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha512-Zcn6bjR/8RZbLEpLIeOwNtzREBAJnUKESxces60Mpoj+2okopSAcSUIUOseddDm0cxnGQzxIR7vJgsLZbdLE3w==" crossorigin="">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="dashboard-identity"><span class="identity-mark" aria-hidden="true"></span><div><p class="eyebrow" data-i18n="intelligence">Facilities intelligence</p><h1 data-i18n="title">Gezira Facilities Dashboard</h1></div></div>
+      <div class="header-meta"><span id="data-status" role="status">Loading data...</span><div class="language-toggle" role="group" aria-label="Language"><button type="button" data-language="en" class="active">EN</button><button type="button" data-language="ar">AR</button></div><label class="theme-toggle" title="Toggle dark mode"><input id="theme-toggle" type="checkbox" aria-label="Dark mode"><span class="theme-toggle-control" aria-hidden="true"></span><span data-i18n="dark">Dark</span></label><button class="icon-button help-button" id="help-button" type="button" title="How to use the dashboard" aria-label="How to use the dashboard">?</button><button class="icon-button" id="reset-map" type="button" title="Reset map view" aria-label="Reset map view">&#8634;</button></div>
+    </header>
+    <main class="dashboard">
+      <section class="workspace">
+        <aside class="sidebar" aria-label="Map filters">
+          <div class="sidebar-heading"><p class="eyebrow" data-i18n="explore">Explore</p><h2 data-i18n="mapLayers">Map layers</h2></div>
+          <fieldset class="layer-controls"><legend data-i18n="displayedLayers">Displayed layers</legend>
+            <label class="toggle"><input type="checkbox" data-layer="localities" checked><span class="toggle-control"></span><span data-i18n="localityBoundaries">Locality boundaries</span></label>
+            <label class="toggle"><input type="checkbox" id="labels-toggle" checked><span class="toggle-control"></span><span data-i18n="localityLabels">Locality labels</span></label>
+            <label class="toggle"><input type="checkbox" data-layer="health" checked><span class="toggle-control"></span><span data-i18n="healthFacilities">Health facilities</span></label>
+            <label class="toggle"><input type="checkbox" data-layer="water" checked><span class="toggle-control"></span><span data-i18n="waterProjects">Water projects</span></label>
+            <label class="toggle"><input type="checkbox" data-layer="schools"><span class="toggle-control"></span><span><span data-i18n="schools">Schools</span> <small data-i18n="loadsOnDemand">loads on demand</small></span></label>
+            <label class="toggle"><input type="checkbox" data-layer="educationReference"><span class="toggle-control"></span><span data-i18n="educationReference">Education reference</span></label>
+            <label class="toggle"><input type="checkbox" data-layer="waterReference"><span class="toggle-control"></span><span data-i18n="waterReference">Water infrastructure reference</span></label>
+          </fieldset>
+          <div class="filter-group locality-filter"><label for="locality-filter" data-i18n="localityFilter">Locality</label><select id="locality-filter"><option value="all">All Al Gezira localities</option></select></div>
+          <div class="filter-group"><label for="search-filter" data-i18n="search">Search facilities and projects</label><input id="search-filter" type="search" autocomplete="off" placeholder="Search by name or ID"></div>
+          <section class="locality-profile" aria-labelledby="profile-title"><p class="eyebrow" data-i18n="localityProfile">Locality profile</p><h3 id="profile-title">All Al Gezira localities</h3><dl><div><dt data-i18n="population">Population</dt><dd id="profile-population">-</dd></div><div><dt data-i18n="healthFacilities">Health facilities</dt><dd id="profile-health">-</dd></div><div><dt data-i18n="waterProjects">Water projects</dt><dd id="profile-water">-</dd></div><div><dt data-i18n="schools">Schools</dt><dd id="profile-schools">-</dd></div><div><dt data-i18n="authoritySchools">Authority school records</dt><dd id="profile-authority-schools">-</dd></div><div><dt data-i18n="students">Students enrolled</dt><dd id="profile-students">-</dd></div><div><dt data-i18n="educationReference">Education reference</dt><dd id="profile-education-reference">-</dd></div><div><dt data-i18n="waterReference">Water infrastructure reference</dt><dd id="profile-water-reference">-</dd></div><div><dt data-i18n="facilityRate">Health facilities per 10,000</dt><dd id="profile-rate">-</dd></div></dl><p id="data-quality" class="data-quality"></p></section>
+          <div class="legend" aria-label="Map legend"><p class="eyebrow" data-i18n="legend">Legend</p><span><i class="legend-dot health-dot"></i><span data-i18n="healthFacility">Health facility</span></span><span><i class="legend-dot water-dot"></i><span data-i18n="waterProject">Water project</span></span><span><i class="legend-dot school-dot"></i><span data-i18n="school">School</span></span><span><i class="legend-dot education-reference-dot"></i><span data-i18n="educationReference">Education reference</span></span><span><i class="legend-dot water-reference-dot"></i><span data-i18n="waterReference">Water infrastructure reference</span></span><span><i class="legend-area"></i><span data-i18n="localityBoundary">Locality boundary</span></span><div class="population-scale" aria-label="Locality population intensity from low to high"><span data-i18n="reportedPopulation">Reported population</span><i></i><small data-i18n="low">Low</small><small data-i18n="high">High</small></div><span><i class="legend-area no-population"></i><span data-i18n="populationNotReported">Population not reported</span></span></div>
+        </aside>
+        <section class="map-panel" aria-label="Interactive facilities map">
+          <div class="map-toolbar"><div><h2 data-i18n="facilityCoverage">Facility coverage</h2><p id="result-summary">Preparing map data...</p></div><div class="map-actions"><button id="share-view" type="button" data-i18n="share">Share view</button><button id="print-dashboard" type="button" data-i18n="print">Print dashboard</button><button id="fit-results" type="button" data-i18n="fitResults">Fit results</button></div></div>
+          <div id="map" role="application" aria-label="Interactive map of facilities"></div>
+          <div id="map-loading" class="map-loading"><span></span>Loading geographic layers</div>
+        </section>
+      </section>
+      <footer class="source-footnote" aria-label="Data sources"><span data-i18n="dataSources">Data sources</span><span><b data-i18n="healthFacilities">Health facilities</b>: <i data-i18n="healthPillar">Health Pillar</i></span><span><b data-i18n="waterProjects">Water projects</b>: <i data-i18n="rrPillar">R&amp;R Pillar</i></span><span><b data-i18n="schools">Schools</b>: <i data-i18n="gisUnit">GIS Unit data assets</i></span><span><b data-i18n="population">Population</b>: <a href="https://data.humdata.org/dataset/cod-ps-sdn" target="_blank" rel="noreferrer" data-i18n="populationSource">UNFPA / HDX, 2024</a></span><span><b data-i18n="educationReference">Education reference (HOT/OSM)</b>: <i data-i18n="hotOsm">Humanitarian OpenStreetMap Team / OpenStreetMap</i></span><span><b data-i18n="waterReference">Water infrastructure reference (HOT/OSM)</b>: <i data-i18n="hotOsm">Humanitarian OpenStreetMap Team / OpenStreetMap</i></span></footer>
+    </main>
+    <dialog class="help-dialog" id="help-dialog" aria-labelledby="help-title-en">
+      <div class="help-content" data-language-content="en"><div class="dialog-heading"><div><p class="eyebrow">Guide</p><h2 id="help-title-en">How to use the dashboard</h2></div><button class="dialog-close" type="button" aria-label="Close guide">&times;</button></div><ol><li>Use the <b>Locality</b> selector to focus the map on a locality. The map zooms to its boundary and KPIs update to points within it.</li><li>Turn map layers on or off to compare health facilities, water projects, schools, and locality boundaries.</li><li>Select <b>Schools</b> to load school locations within Al Gezira localities.</li><li>Click a marker, cluster, or locality to view its available details. Zoom in to expand marker clusters.</li><li>Use <b>Fit results</b> to return to the active locality or the complete Al Gezira view.</li></ol></div>
+      <div class="help-content" data-language-content="ar"><div class="dialog-heading"><div><p class="eyebrow">دليل الاستخدام</p><h2>كيفية استخدام لوحة المعلومات</h2></div><button class="dialog-close" type="button" aria-label="إغلاق الدليل">&times;</button></div><ol><li>استخدم قائمة <b>المحلية</b> للتركيز على محلية محددة. ستكبّر الخريطة إلى حدودها وتتحدث المؤشرات بالنقاط الواقعة داخلها.</li><li>شغّل طبقات الخريطة أو أوقفها لمقارنة المرافق الصحية ومشاريع المياه والمدارس وحدود المحليات.</li><li>فعّل طبقة <b>المدارس</b> لتحميل مواقع المدارس الواقعة ضمن محليات الجزيرة.</li><li>اضغط على علامة أو تجمّع أو محلية لعرض التفاصيل المتاحة. كبّر الخريطة لتفكيك تجمّعات العلامات.</li><li>استخدم <b>ملاءمة العرض</b> للعودة إلى المحلية المحددة أو عرض الجزيرة الكامل.</li></ol></div>
+    </dialog>
+    <template id="popup-template"><article class="popup-content"><p class="popup-type"></p><h3></h3><dl></dl></article></template>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
