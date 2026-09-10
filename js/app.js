@@ -19,7 +19,7 @@ const STATE_OPTIONS = [
 ];
 
 const urlState = new URLSearchParams(location.search);
-const state = { health: [], water: [], schools: [], authoritySchools: [], educationReference: [], waterReference: [], localities: null, metadata: null, geziraGeometries: [], selectedLocalityCodes: (urlState.get('locality') || '').split(',').filter(Boolean), selectedStates: (urlState.get('states') || '').split(',').filter(Boolean).length ? urlState.get('states').split(',').filter(Boolean) : STATE_OPTIONS.map(option => option.value), search: urlState.get('search') || '', schoolLoaded: false, educationReferenceLoaded: false, waterReferenceLoaded: false, labelsVisible: urlState.get('labels') !== 'false', quality: { healthInvalid: 0, waterInvalid: 0, schoolsOutside: 0 }, language: 'en', choroplethMode: urlState.get('view') || 'population', humanitarianIndicators: {} };
+const state = { health: [], water: [], schools: [], authoritySchools: [], educationReference: [], waterReference: [], localities: null, metadata: null, geziraGeometries: [], selectedLocalityCodes: (urlState.get('locality') || '').split(',').filter(Boolean), selectedStates: (urlState.get('states') || '').split(',').filter(Boolean).length ? urlState.get('states').split(',').filter(Boolean) : ['Gezira'], search: urlState.get('search') || '', schoolLoaded: false, educationReferenceLoaded: false, waterReferenceLoaded: false, labelsVisible: urlState.get('labels') !== 'false', quality: { healthInvalid: 0, waterInvalid: 0, schoolsOutside: 0 }, language: 'en', choroplethMode: urlState.get('view') || 'population', humanitarianIndicators: {} };
 const layers = {};
 let localityPopulationMaximum = 1;
 let idpMaximum = 1;
